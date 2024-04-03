@@ -1,15 +1,23 @@
 import axios from "axios";
 export const getNumbers = async (req,res)=>{
     try{
-        const token = {
-            token_type: "Bearer",
-            access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJNYXBDbGFpbXMiOnsiZXhwIjoxNzEyMTQ4NTkwLCJpYXQiOjE3MTIxNDgyOTAsImlzcyI6IkFmZm9yZG1lZCIsImp0aSI6ImI1NDVkNTliLTA0OWMtNDk1MS1hNTQ3LTUyOTRiZTc0NWQyMSIsInN1YiI6Im1uMzI1OEBzcm1pc3QuZWR1LmluIn0sImNvbXBhbnlOYW1lIjoiU1JNIEluc3RpdHV0ZSBvZiBTY2llbmNlIEFuZCBUZWNobm9sb2d5LFJhbWFwdXJhbSIsImNsaWVudElEIjoiYjU0NWQ1OWItMDQ5Yy00OTUxLWE1NDctNTI5NGJlNzQ1ZDIxIiwiY2xpZW50U2VjcmV0IjoiU0tRS3lEcHhUaWZCQ1lZcCIsIm93bmVyTmFtZSI6Ik1VVEhVR0FORVNBTiBOIEciLCJvd25lckVtYWlsIjoibW4zMjU4QHNybWlzdC5lZHUuaW4iLCJyb2xsTm8iOiJSQTIxMTEwMDMwMjAzNDMifQ.2jydBLI6ddVOuYndDY6hcBy7KtE7E0QgGd_2UzGJfwk",
-            expires_in: 1712148590,
-        };
-        const{numID} = req.params;
-        const response =await axios.get("http://20.244.56.144/test/primes/${numID}",{
+        const tokenResponse = await axios.post("http://20.244.56.144/test/auth", {
+            companyName: "SRM Institute of Science And Technology,Ramapuram",
+            clientID: "0cfebb1e-2064-4950-aabb-ec1c3bfb43c2",
+            clientSecret: "tdFhMTIGmlmNvrRI",
+            ownerName: "MUTHUGANESAN N G",
+            ownerEmail: "mn3258@srmist.edu.in",
+            rollNo: "RA2111003020343"
+        });
+        if(!tokenResponse){
+            throw new Error("Auth failed");
+        }
+        const accessToken = tokenResponse.data.access_token;
+        const {numId} = req.params;
+        console.log(numId);
+        const response =await axios.get(`http://20.244.56.144/test/primes/${numId}`,{
             headers:{
-                "Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJNYXBDbGFpbXMiOnsiZXhwIjoxNzEyMTQ4NTkwLCJpYXQiOjE3MTIxNDgyOTAsImlzcyI6IkFmZm9yZG1lZCIsImp0aSI6ImI1NDVkNTliLTA0OWMtNDk1MS1hNTQ3LTUyOTRiZTc0NWQyMSIsInN1YiI6Im1uMzI1OEBzcm1pc3QuZWR1LmluIn0sImNvbXBhbnlOYW1lIjoiU1JNIEluc3RpdHV0ZSBvZiBTY2llbmNlIEFuZCBUZWNobm9sb2d5LFJhbWFwdXJhbSIsImNsaWVudElEIjoiYjU0NWQ1OWItMDQ5Yy00OTUxLWE1NDctNTI5NGJlNzQ1ZDIxIiwiY2xpZW50U2VjcmV0IjoiU0tRS3lEcHhUaWZCQ1lZcCIsIm93bmVyTmFtZSI6Ik1VVEhVR0FORVNBTiBOIEciLCJvd25lckVtYWlsIjoibW4zMjU4QHNybWlzdC5lZHUuaW4iLCJyb2xsTm8iOiJSQTIxMTEwMDMwMjAzNDMifQ.2jydBLI6ddVOuYndDY6hcBy7KtE7E0QgGd_2UzGJfwk",
+                "Authorization":`Bearer ${accessToken}`
             }
         })
         res.json(response.data);
